@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        
+        <!-- ================= HOME VIEW ================= -->
+        <div id="view-home" class="view active">
+            <header>
+                <div class="logo-area">
+                    <div class="app-icon" style="background: #ffedd5; color: #ea580c; border-radius: 8px;">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <span class="header-title">ExpenseTracker</span>
+                </div>
+                <!-- Bell icon, not functional just UI -->
+                <div class="notification-bell">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+            </header>
+
+            <div class="view-padding">
+                <div class="greeting">
+                    <h2>Hello, <span id="displayUserName">Venkatesh</span></h2>
+                    <p>Here's your financial overview</p>
+                </div>
+
+                <!-- Total Balance -->
+                <div class="balance-card">
+                    <div class="balance-card-header">
+                        <h3>TOTAL BALANCE</h3>
+                        <i class="fa-solid fa-eye eye-icon"></i>
+                    </div>
+                    <div class="total-amount">$<span id="totalBalance">0.00</span></div>
+                    <div class="trend"><i class="fa-solid fa-arrow-trend-up"></i> +2.4% from last month</div>
+                </div>
+
+                <!-- Income / Expense Summaries -->
+                <div class="summary-grid">
+                    <div class="mini-card income-card">
+                        <div class="mini-card-header"><i class="fa-solid fa-arrow-down" style="font-size: 0.75rem;"></i> INCOME</div>
+                        <div class="mini-amount">$<span id="totalIncome">0.00</span></div>
+                    </div>
+                    <div class="mini-card expense-card">
+                        <div class="mini-card-header"><i class="fa-solid fa-arrow-up" style="font-size: 0.75rem;"></i> EXPENSES</div>
+                        <div class="mini-amount">$<span id="totalExpense">0.00</span></div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="section-header">
+                    <h3>Recent Transactions</h3>
+                    <span class="see-all" onclick="navTo('list')">See All</span>
+                </div>
+
+                <div id="recentTxnList" class="transaction-list">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Weekly Activity (Static UI mock) -->
+                <div class="section-header" style="margin-top: 1rem;">
+                    <h3>Weekly Activity</h3>
+                </div>
+                
+                <div class="chart-container">
+                    <div class="bar-col">
+                        <div class="bar-wrapper"><div class="bar-fill" style="height: 40%;"></div></div>
+                        <span>Mon</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-wrapper"><div class="bar-fill" style="height: 25%;"></div></div>
+                        <span>Tue</span>
+                    </div>
+                    <div class="bar-col active">
+                        <div class="bar-wrapper"><div class="bar-fill" style="height: 75%;"></div></div>
+                        <span style="color:var(--text-primary);">Wed</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-wrapper"><div class="bar-fill" style="height: 15%;"></div></div>
+                        <span>Thu</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-wrapper"><div class="bar-fill" style="height: 45%;"></div></div>
+                        <span>Fri</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-wrapper"><div class="bar-fill" style="height: 20%;"></div></div>
+                        <span>Sat</span>
+                    </div>
+                    <div class="bar-col">
+                        <div class="bar-wrapper"><div class="bar-fill" style="height: 35%;"></div></div>
+                        <span>Sun</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= ADD TRANSACTION VIEW ================= -->
+        <div id="view-add" class="view">
+            <div class="top-nav">
+                <button class="back-btn" onclick="navTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2>Add Transaction</h2>
+            </div>
+            
+            <div class="add-form-card" style="margin-bottom: 2rem;">
+                <form id="addTxnForm">
+                    <!-- Setup radio toggle specifically mimicking standard forms, though image just says "Add Expense" -->
+                    <div class="form-group" style="display: flex; gap: 1rem;">
+                        <label style="display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="txnType" value="expense" checked> Expense</label>
+                        <label style="display:flex; align-items:center; gap:0.5rem;"><input type="radio" name="txnType" value="income"> Income</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">EXPENSE NAME</label>
+                        <input type="text" id="txnName" class="form-control focus-orange" placeholder="e.g. Grocery Shopping" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">AMOUNT</label>
+                        <input type="number" id="txnAmount" class="form-control focus-orange amount-input" placeholder="$ 0.00" step="0.01" min="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">CATEGORY</label>
+                        <div class="select-wrapper">
+                            <select id="txnCategory" class="form-control focus-orange">
+                                <option value="Groceries">Groceries</option>
+                                <option value="Transport">Transport</option>
+                                <option value="Food & Drink">Food & Drink</option>
+                                <option value="Work">Work</option>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">DATE</label>
+                        <div class="input-with-icon">
+                            <input type="date" id="txnDate" class="form-control focus-orange" required style="padding-left: 1rem;">
+                            <i class="fa-regular fa-calendar" style="left: auto; right: 1rem; color: #64748b;"></i>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">DESCRIPTION</label>
+                        <textarea id="txnDesc" class="form-control focus-orange" rows="3" placeholder="Add additional details..."></textarea>
+                    </div>
+
+                    <div class="attach-receipt">
+                        <i class="fa-solid fa-paperclip"></i> Attach Receipt
+                    </div>
+
+                    <button type="submit" class="btn btn-orange" style="margin-top: 2rem;">
+                        Add Transaction <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= LIST VIEW ================= -->
+        <div id="view-list" class="view">
+            <div class="top-nav" style="padding-bottom: 0.5rem;">
+                <button class="back-btn" onclick="navTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2>Expense List</h2>
+            </div>
+            
+            <div class="search-bar">
+                <div class="input-with-icon" style="background: white; border-radius: var(--radius-sm);  border: 1px solid var(--border-color);">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" class="form-control" placeholder="Search expenses..." style="background: transparent; border: none;">
+                </div>
+            </div>
+
+            <div class="filter-scroll" id="filterList">
+                <div class="filter-pill active" data-filter="All">All</div>
+                <div class="filter-pill" data-filter="Food & Drink">Food & Drink</div>
+                <div class="filter-pill" data-filter="Transport">Transport</div>
+                <div class="filter-pill" data-filter="Shopping">Shopping</div>
+                <div class="filter-pill" data-filter="Groceries">Groceries</div>
+                <div class="filter-pill" data-filter="Other">Other</div>
+            </div>
+
+            <div class="list-header-row">
+                <span>Transactions</span>
+                <span id="fullListCount" style="text-transform: none; font-weight: 500;">Showing 0 items</span>
+            </div>
+
+            <div class="list-card">
+                <div class="list-header-row" style="background: #f8fafc; padding: 0.75rem 1.5rem; margin-bottom: 0; border-bottom: 1px solid var(--border-color);">
+                    <span style="flex:1;">EXPENSE</span>
+                    <span style="width: 70px; text-align: right; margin-right: 1.5rem;">AMOUNT</span>
+                    <span>ACTIONS</span>
+                </div>
+                
+                <div id="fullTxnList">
+                    <!-- Populated by JS -->
+                </div>
+                
+                <div class="load-more">
+                    Load More <i class="fa-solid fa-angle-down"></i>
+                </div>
+            </div>
+            
+            <div style="height: 2rem;"></div> <!-- Spacing -->
+        </div>
+
+        <!-- ================= SETTINGS VIEW ================= -->
+        <div id="view-settings" class="view">
+            <div class="top-nav">
+                <button class="back-btn" onclick="navTo('home')"><i class="fa-solid fa-arrow-left"></i></button>
+                <h2>Settings</h2>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <!-- Initials placeholder -->
+                    <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#cbd5e1; font-size:2.5rem; color:white; font-weight:600;">V</div>
+                    <!-- Mock edit pen -->
+                    <div class="edit-avatar-btn"><i class="fa-solid fa-pen"></i></div>
+                </div>
+                <h3 class="profile-name">Venkatesh</h3>
+                <p class="profile-email">venkatesh@example.com</p>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">PREFERENCES</div>
+                <div class="settings-list">
+                    <div class="settings-item">
+                        <div class="settings-item-left">
+                            <div class="settings-icon"><i class="fa-solid fa-money-bill"></i></div>
+                            Currency
+                        </div>
+                        <div class="settings-item-right">
+                            USD ($) <i class="fa-solid fa-angle-right"></i>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-left">
+                            <div class="settings-icon"><i class="fa-solid fa-bell"></i></div>
+                            Push Notifications
+                        </div>
+                        <div class="settings-item-right">
+                            <label class="toggle-switch">
+                              <input type="checkbox" checked>
+                              <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="settings-item">
+                        <div class="settings-item-left">
+                            <div class="settings-icon" style="background:#fff7ed; color:#f97316;"><i class="fa-solid fa-moon"></i></div>
+                            Dark Mode
+                        </div>
+                        <div class="settings-item-right">
+                            <label class="toggle-switch">
+                              <input type="checkbox" id="darkModeToggle">
+                              <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <div class="settings-section-title">SECURITY & DATA</div>
+                <div class="settings-list">
+                    <div class="settings-item" onclick="resetAllData()">
+                        <div class="settings-item-left">
+                            <div class="settings-icon" style="background:#fee2e2; color:var(--danger-color);"><i class="fa-solid fa-trash-can"></i></div>
+                            <span style="color:var(--danger-color);">Reset All Data</span>
+                        </div>
+                        <div class="settings-item-right">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </div>
+                    </div>
+                    <div class="settings-item" onclick="logout()">
+                        <div class="settings-item-left">
+                            <div class="settings-icon" style="background:#f1f5f9; color:#475569;"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                            Logout
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="version-info">
+                Version 2.4.1 (Build 1204)<br>
+                © 2026 Expense Tracker Inc.
+            </div>
+
+            <div style="height: 2rem;"></div>
+        </div>
+
+        <!-- ================= BOTTOM NAV ================= -->
+        <nav class="bottom-nav">
+            <div class="nav-item active" onclick="navTo('home')" data-tab="home">
+                <i class="fa-solid fa-table-cells-large"></i>
+                Dashboard
+            </div>
+            <div class="nav-item" onclick="navTo('list')" data-tab="list">
+                <i class="fa-solid fa-list"></i>
+                Expenses
+            </div>
+            
+            <!-- Floating Add Button -->
+            <div class="nav-add-btn" onclick="navTo('add')" data-tab="add">
+                <i class="fa-solid fa-plus"></i>
+            </div>
+            
+            <!-- Replaced Budgets with empty mock to hold layout -->
+            <div class="nav-item" onclick="alert('Budgets view not yet implemented')" data-tab="budgets">
+                <i class="fa-solid fa-chart-pie"></i>
+                Budgets
+            </div>
+            <div class="nav-item" onclick="navTo('settings')" data-tab="settings">
+                <i class="fa-solid fa-gear"></i>
+                Settings
+            </div>
+        </nav>
+        
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
